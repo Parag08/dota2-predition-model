@@ -30,16 +30,33 @@ import warnings
 22	Ranked All Pick
 '''
 
-allowed_game_modes = [1,2,5,22]
 
-#csv_file = open("output.csv", "wb")
-csv_file = open("output.csv", "a")
+csv_file = open("output.csv", "wb")
+#csv_file = open("output.csv", "a")
+
+def match_filter(match,min_duration=600,human_player=10):
+    allowed_game_modes = [1,2,5,22]
+    allowed_lobby_types = [0,2,5,6,7]
+    if match['game_mode'] not in allowed_game_modes:
+        return False
+    if match['duration'] < min_duration:
+        return False
+    if match['lobby_type'] not in allowed_lobby_types:
+        return False
+    if match['human_players'] != human_player:
+        return False
+    for player in match['players']:
+        if player['leaver_status'] != 0:
+            return False
+    return True
+
+
 
 def add_game_to_csv(match):
     '''
     function to add dota game to CSV file. CSV file consist of coloums 1-118
     '''
-    if match['game_mode'] not in allowed_game_modes:
+    if match_filter(match) == False:
         return
     radiant_win = False
     if match['radiant_win'] == 'true':
