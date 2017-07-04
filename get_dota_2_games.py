@@ -83,21 +83,26 @@ def add_game_to_csv(match):
     writer.writerow(write_array)
 
 def get_matches(api,number_of_matches,start_at_match=2484255386):
-    matches = []
-    while len(matches) < number_of_matches:
-        print(start_at_match,len(matches))
-        response_from_api = api.get_match_history_by_seq_num(start_at_match_seq_num=start_at_match)
-        if response_from_api['status']==1:
-            matches = response_from_api['matches'] + matches
-            start_at_match = response_from_api['matches'][99]['match_seq_num']
-        else:
-            warnings.warn("response returned with wrong status code:",response_from_api['status'])
-            break
-    return matches
+    i = 0
+    j = 0
+    while i < number_of_matches:
+         print(start_at_match,i,j)
+         try:
+            response_from_api = api.get_match_history_by_seq_num(start_at_match_seq_num=start_at_match)
+            if response_from_api['status']==1 and response_from_api != None:
+                start_at_match = response_from_api['matches'][99]['match_seq_num']
+                i = i + len(response_from_api['matches'])
+                for match in response_from_api['matches']:
+                    add_game_to_csv(match)
+            else:
+                warnings.warn("response returned with wrong status code:",response_from_api['status'])
+                break
+         except Exception as exception:
+            print exception
+            start_at_match = start_at_match + j
+            j = j + 1
 
 json_data=open('./api-key.json').read()
 api_details=json.loads(json_data) 
 api = dota2api.Initialise(api_details['key'])
-matches = get_matches(api,100)
-for match in matches:
-    add_game_to_csv(match)
+matches = get_matches(api,2000)
