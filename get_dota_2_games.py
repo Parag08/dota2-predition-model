@@ -31,7 +31,7 @@ import warnings
 '''
 
 
-csv_file = open("output.csv", "wb")
+#csv_file = open("output.csv", "wb")
 #csv_file = open("output.csv", "a")
 
 def match_filter(match,min_duration=600,human_player=10):
@@ -52,7 +52,7 @@ def match_filter(match,min_duration=600,human_player=10):
 
 
 
-def add_game_to_csv(match):
+def add_game_to_csv(match,csv_file):
     '''
     function to add dota game to CSV file. CSV file consist of coloums 1-118
     '''
@@ -82,7 +82,7 @@ def add_game_to_csv(match):
     writer = csv.writer(csv_file)
     writer.writerow(write_array)
 
-def get_matches(api,number_of_matches,start_at_match=2484255386):
+def get_matches(api,number_of_matches,csv_file,start_at_match=2484255386):
     i = 0
     j = 0
     while i < number_of_matches:
@@ -93,7 +93,7 @@ def get_matches(api,number_of_matches,start_at_match=2484255386):
                 start_at_match = response_from_api['matches'][99]['match_seq_num']
                 i = i + len(response_from_api['matches'])
                 for match in response_from_api['matches']:
-                    add_game_to_csv(match)
+                    add_game_to_csv(match,csv_file)
             else:
                 warnings.warn("response returned with wrong status code:",response_from_api['status'])
                 break
@@ -102,7 +102,14 @@ def get_matches(api,number_of_matches,start_at_match=2484255386):
             start_at_match = start_at_match + j
             j = j + 1
 
+def openfile(mode="wb"):
+    date = time.strftime("%d-%m-%Y")
+    filename = './data/'+date + '_dota_games.csv'
+    fo = open(filename,mode)
+    return fo
+
 json_data=open('./api-key.json').read()
 api_details=json.loads(json_data) 
 api = dota2api.Initialise(api_details['key'])
-matches = get_matches(api,2000)
+csv_file = openfile()
+matches = get_matches(api,100,csv_file)
