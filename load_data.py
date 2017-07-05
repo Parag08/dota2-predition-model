@@ -6,7 +6,7 @@ def get_files_list(folder='./data/'):
     csv_list = []
     for csv in fileslist:
         if csv[-3:-1]+csv[-1] == 'csv':
-            csv_list.append(csv)
+            csv_list.append(folder+csv)
     return csv_list
 
 def get_tensor(file_list,total_colums=115):
@@ -20,16 +20,18 @@ def get_tensor(file_list,total_colums=115):
     return features ,values
 
 def iterate_through_csv_file(features,function,length=100):
+    init = tf.global_variables_initializer()
     with tf.Session() as sess:
         tf.global_variables_initializer().run()
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
         for i in range(length):
-            try:
-                example_data, country_name = sess.run([features, function])
-                print(example_data, country_name,i)
-            except tf.errors.OutOfRangeError:
-                break
+            example_data, country_name = sess.run([features, function])
+            print(example_data, country_name,i)
         coord.request_stop()
         coord.join(threads)
 
+
+features ,values = get_tensor(get_files_list())
+add_vector =  sum(values)
+iterate_through_csv_file(features,add_vector)
