@@ -9,6 +9,10 @@ step-2:- get games played by following players in last 7.00 patch
 
 step-3:- enter them into the csv-files
 
+[ to do:-                                                                      ]
+[things to look at load_data should always load data whenever list is updated  ]
+[force process termination should be garcefully handled                        ]
+[how should the data be loaded into the model?                                 ]
 chapter: data loading
 
 step-1:- read all csv files
