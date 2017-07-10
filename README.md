@@ -1,3 +1,6 @@
+<b>someone else beat me to it so I am no longer continuing this please go to following link https://github.com/andreiapostoae/dota2-predictor </b>
+this project it dicontinued as of 10-07-2017
+
 sudo pip install dota2api
 sudo pip install requests
 
